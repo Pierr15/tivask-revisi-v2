@@ -1,0 +1,24 @@
+{
+  "name": "tivask-revisi-v2",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "allowScripts": {
+    "@prisma/client": true,
+    "prisma": true,
+    "bcrypt": true,
+    "puppeteer": true,
+    "@google/genai": true,
+    "@prisma/engines": true,
+    "protobufjs": true,
+    "unrs-resolver": true
+  }
+}

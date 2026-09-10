@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model KnowledgeBaseEntry {
+  id         String     @id @default(uuid())
+  category   String
+  title      String
+  content    String
+  validUntil DateTime?
+  isActive   Boolean    @default(true)
+  keywords   String[]
+  updatedAt  DateTime   @updatedAt
+  messages   Message[]  @relation("MatchedKb")
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model MenuItem {
+  id          String   @id @default(uuid())
+  label       String
+  order       Int
+  categoryRef String
+  isActive    Boolean  @default(true)
+
+  @@index([order])
+}
+
+model WhatsAppSession {
+  id          String   @id @default(uuid())
+  phoneNumber String?
+  status      String   // 'connected', 'disconnected', 'pairing'
+  updatedAt   DateTime @updatedAt
+}
+
+model Conversation {
+  id            String       @id @default(uuid())
+  contactPhone  String
+  contactName   String?
+  status        String       // 'active', 'escalated', 'resolved'
+  menuState     Json?
+  lastMessageAt DateTime     @default(now())
+  messages      Message[]
+  escalations   Escalation[]
+
+  @@index([contactPhone])
+  @@index([status])
+}
+
+model Message {
+  id                String              @id @default(uuid())
+  conversationId    String
+  conversation      Conversation        @relation(fields: [conversationId], references: [id])
+  sender            String              // 'user', 'bot', 'admin'
+  content           String
+  externalMessageId String?             @unique
+  matchedKbId       String?
+  matchedKb         KnowledgeBaseEntry? @relation("MatchedKb", fields: [matchedKbId], references: [id])
+  groundingStatus   String?             // 'grounded', 'fallback', 'n_a'
+  createdAt         DateTime            @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model Escalation {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  reason         String
+  status         String       // 'pending', 'handled'
+  createdAt      DateTime     @default(now())
+  resolvedAt     DateTime?
+
+  @@index([conversationId, status])
+}
