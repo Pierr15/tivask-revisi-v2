@@ -42,12 +42,4 @@ app.get("/", (req, res) => {
   app.use(errorHandler);
 
   const PORT = process.env.PORT || 3001;
-
-  if (require.main === module) {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      // Start WhatsApp client here
-      initWhatsAppClient();
-    });
-  }
 });
