@@ -238,7 +238,11 @@ export default function KnowledgeBasePage() {
       )}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Knowledge Base</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+        <button
+          type="button"
+          onClick={() => setShowAddModal(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        >
           Add Entry
         </button>
       </div>
