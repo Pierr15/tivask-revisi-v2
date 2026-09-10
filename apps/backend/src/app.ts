@@ -1,12 +1,14 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+
 import authRoutes from "./routes/auth.routes";
 import kbRoutes from "./routes/kb.routes";
 import menuRoutes from "./routes/menu.routes";
 import conversationRoutes from "./routes/conversation.routes";
 import escalationRoutes from "./routes/escalation.routes";
 import whatsappRoutes from "./routes/whatsapp.routes";
+
 import { errorHandler } from "./middleware/errorHandler";
 import { initWhatsAppClient } from "./whatsapp/whatsappService";
 
@@ -23,23 +25,30 @@ app.use(
 
 app.use(express.json());
 
-export default app;
 app.get("/", (req, res) => {
   res.json({
     message: "TIVAsk Backend is running",
     status: "ok",
   });
-
-  // Routes
-  app.use("/api/auth", authRoutes);
-  app.use("/api/knowledge-base", kbRoutes);
-  app.use("/api/menu-items", menuRoutes);
-  app.use("/api/conversations", conversationRoutes);
-  app.use("/api/escalations", escalationRoutes);
-  app.use("/api/whatsapp", whatsappRoutes);
-
-  // Error handler
-  app.use(errorHandler);
-
-  const PORT = process.env.PORT || 3001;
 });
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/knowledge-base", kbRoutes);
+app.use("/api/menu-items", menuRoutes);
+app.use("/api/conversations", conversationRoutes);
+app.use("/api/escalations", escalationRoutes);
+app.use("/api/whatsapp", whatsappRoutes);
+
+// Error handler HARUS setelah routes
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`🚀 TIVAsk Backend running at http://localhost:${PORT}`);
+
+  initWhatsAppClient();
+});
+
+export default app;
